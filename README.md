@@ -1,7 +1,6 @@
 # hydro
 
-**A simple state management & service container solution for Flutter.
-**
+A simple state management & service container solution for Flutter.
 
 
 ### Usage
