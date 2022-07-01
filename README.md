@@ -1,24 +1,41 @@
+# hydro
 
-## Features
+**A simple state management & service container solution for Flutter.
+**
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
+### Usage
 
 ```dart
-const like = 'sample';
+import 'package:hydro/hydro.dart';
 ```
 
-## Additional information
+```dart
+// Adding to the service container
+// If already been added, nothing will change.
+Hydro.set(SomeClass
+(
+));
+```
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+```dart
+// replace an existing service, set `forceReplace: true`
+Hydro.set(SomeClass
+(
+), forceReplace: true
+);
+```
+
+```dart
+class _SomePageState extends State<SomePage> {
+  // ...   
+
+  SomeClass? some_class = Hydro.get<SomeClass>(this);
+
+// OR
+  SomeClass some_class = Hydro.mustGet<SomeClass>(this);
+
+// NOTE: `get` & `mustGet` methods accept an argument of type `State`,
+// it is required to refresh the UI when changes occur;
+// You may as well leave it empty if UI updates are NOT needed.
+// SomeClass? some_class = Hydro.get<SomeClass>();
+```
