@@ -23,14 +23,17 @@ import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
 abstract class Hydro<T> {
-  static final Map<Type, _quark> _quarks = {};
+  static final Map<Type, _Quark> _quarks = {};
 
+  /// Adds a service (class object) to the container.
+  /// In case the service already exists in the container, this will have no effects.
+  /// to force replace the existing service (if any), set `forceReplace: true`.
   static void set(Object o, {forceReplace = false}) {
     Type rType = o.runtimeType;
-    _quark? q = _quarks[rType];
+    _Quark? q = _quarks[rType];
 
     if (q == null) {
-      _quarks[rType] = _quark(impl: o, states: []);
+      _quarks[rType] = _Quark(impl: o, states: []);
       return;
     }
 
@@ -43,6 +46,13 @@ abstract class Hydro<T> {
     }
   }
 
+  /// Retrieves a service from the services container, if any.
+  /// If service of type `T`, does not already exist, this will return `null`.
+  ///
+  /// If used inside a class which inherits from the abstract, generic class `State`,
+  /// then, set argument `state` to `this`.
+  ///
+  /// if `state` is null, the UI will NOT re-render when changes occur.
   static T? get<T>([State? state]) {
     var q = _quarks[T];
     if (q == null) return null;
@@ -54,10 +64,19 @@ abstract class Hydro<T> {
     return q.impl;
   }
 
+  /// Same as `get` method, but without the nullability.
+  ///
+  /// NOTE: this will throw an exception if service of type `T` does not exist
+  /// in the service container.
   static T mustGet<T>([State? state]) {
     return get<T>(state)!;
   }
 
+  /// Refreshs the UI
+  ///
+  /// calls `setState` on each `State` base class of a `StatefulWidget` class
+  /// that has been associated with the service. (check `get`'s method argument & SomeClass extends Hydro),
+  /// EXCEPT for `State` classes which has been unmounted/disposed.
   void update() {
     var q = _quarks[runtimeType];
     if (q == null) return;
@@ -67,7 +86,7 @@ abstract class Hydro<T> {
   }
 }
 
-class _quark<T> {
+class _Quark<T> {
   List<State> states = [];
   late T impl;
 
@@ -86,11 +105,6 @@ class _quark<T> {
   }
 
   void update() {
-    var mountedStates = states.where((element) => element.mounted);
-    for (var element in mountedStates) {
-      element.setState(() {});
-    }
-
     for (int i = 0; i < states.length; i++) {
       if (states[i].mounted) states[i].setState(() {});
     }
@@ -101,5 +115,5 @@ class _quark<T> {
     if (st == null) states.add(state);
   }
 
-  _quark({required this.impl, required this.states});
+  _Quark({required this.impl, required this.states});
 }

@@ -29,7 +29,7 @@ class SomeClass extends Hydro {
     update();
   }
 
-  void IncrementCounter() {
+  void incrementCounter() {
     _counter = _counter + 1;
     update();
   }

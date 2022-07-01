@@ -79,7 +79,7 @@ class _SomePageState extends State<SomePage> {
                             ),
                             ElevatedButton(
                                 onPressed: () {
-                                  someClass.IncrementCounter();
+                                  someClass.incrementCounter();
                                 },
                                 child: const Text("Increment Counter")),
                           ],

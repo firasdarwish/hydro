@@ -8,15 +8,32 @@ A simple state management & service container solution for Flutter.
 import 'package:hydro/hydro.dart';
 ```
 
+```dart
+// inherit Hydro
+class SomeClass extends Hydro {
+  
+  String _name = "inital value";
+  
+  // getter
+  String get name => _name;
+  
+  // setter
+  void setName(String newName) {
+    _name = newName;
+    update(); // NOTE: `update()` is important to refresh the UI.
+  }
+  
+}
+```
 
 ```dart
 // Adding to the service container
 // If already been added, nothing will change.
 Hydro.set(SomeClass());
-```
 
-```dart
-// replace an existing service, set `forceReplace: true`
+// OR
+
+// force replace an existing service, set `forceReplace: true`
 Hydro.set(SomeClass(), forceReplace: true);
 ```
 

@@ -1,6 +1,6 @@
 name: hydro
-description: A simple state management & service container solution.
-version: 0.0.1
+description: A simple, fast state management & service container solution for Flutter, without acrobatics.
+version: 0.0.1-beta1
 homepage: https://firas.dev.sy
 repository: https://github.com/firasdarwish/hydro
 
