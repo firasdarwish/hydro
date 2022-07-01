@@ -1,8 +1,7 @@
 name: hydro
 description: A simple state management & service container solution.
 version: 0.0.1
-author: Firas M. Darwish<firas@dev.sy>
-homepage: https://firas.dev.sy/
+homepage: https://github.com/firasdarwish/hydro
 
 environment:
   sdk: ">=2.12.0 <3.0.0"

@@ -14,6 +14,7 @@
  *    limitations under the License.
  */
 
+/// Contains package's main functionality
 library hydro;
 
 export 'package:hydro/hydro.dart';
