@@ -36,6 +36,12 @@ class _SomePageState extends State<SomePage> {
   }
 
   @override
+  void dispose() {
+    Hydro.dispose<SomeClass>(this);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

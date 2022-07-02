@@ -22,7 +22,7 @@ export 'package:hydro/hydro.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
-abstract class Hydro<T> {
+abstract class Hydro {
   static final Map<Type, _Quark> _quarks = {};
 
   /// Adds a service (class object) to the container.
@@ -33,6 +33,9 @@ abstract class Hydro<T> {
     _Quark? q = _quarks[rType];
 
     if (q == null) {
+      if (o is! Hydro) {
+        debugPrint("[HYDRO]: `${o.runtimeType}` is not a subclass of Hydro.");
+      }
       _quarks[rType] = _Quark(impl: o, states: []);
       return;
     }
@@ -54,6 +57,11 @@ abstract class Hydro<T> {
   ///
   /// if `state` is null, the UI will NOT re-render when changes occur.
   static T? get<T>([State? state]) {
+    if (T == dynamic) {
+      debugPrint(
+          "[HYDRO]: method `get/mustGet` was called without type parameter or it's type parameter is `dynamic`.");
+    }
+
     var q = _quarks[T];
     if (q == null) return null;
 
@@ -72,21 +80,33 @@ abstract class Hydro<T> {
     return get<T>(state)!;
   }
 
-  /// Refreshs the UI
+  /// Updates the UI
   ///
   /// calls `setState` on each `State` base class of a `StatefulWidget` class
   /// that has been associated with the service. (check `get`'s method argument & SomeClass extends Hydro),
   /// EXCEPT for `State` classes which has been unmounted/disposed.
   void update() {
-    var q = _quarks[runtimeType];
-    if (q == null) return;
+    _quarks[runtimeType]?.update();
+  }
 
-    // if (q.autoCleanUnmountedStates) q.cleanUnmountedStates();
-    q.update();
+  /// Removes `State` from UI update list.
+  /// Usually called at the end of the widget's lifecycle,
+  /// when a StatefulWidget's State is no longer
+  /// used/shown and is removed from the widget tree (unmounted).
+  ///
+  /// Although not necessary because Hydro will auto-clean the update list
+  /// at each call of `get` or `mustGet` methods, this might be helpful in preventing
+  /// any unaccounted-for memory leaks.
+  static void dispose<T>(State state) {
+    if (T == dynamic) {
+      debugPrint(
+          "[HYDRO]: method `dispose` was called without type parameter or it's type parameter is `dynamic`.");
+    }
+    _quarks[T]?.removeState(state);
   }
 }
 
-class _Quark<T> {
+class _Quark<T> extends State {
   List<State> states = [];
   late T impl;
 
@@ -112,8 +132,15 @@ class _Quark<T> {
 
   void addStateIfNotExists(State state) {
     var st = states.firstWhereOrNull((element) => element == state);
-    if (st == null) states.add(state);
+    if (st == null) {
+      states.add(state);
+    }
   }
 
   _Quark({required this.impl, required this.states});
+
+  @override
+  Widget build(BuildContext context) {
+    throw UnimplementedError();
+  }
 }
